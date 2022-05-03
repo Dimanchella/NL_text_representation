@@ -75,10 +75,10 @@ namespace NL_text_representation.DEPRICATED
         }
 
 
-        private IEnumerable<WordForm> GetDeepMorphRep(Token token)
+        private IEnumerable<MorphologicalForm> GetDeepMorphRep(Token token)
         {
             var morphsInfo = ma.Parse(token.Lexeme).ToArray();
-            List<WordForm> wordForms = new();
+            List<MorphologicalForm> wordForms = new();
             foreach (var morph in morphsInfo)
             {
                 if (token.Name.Equals("word"))
@@ -105,7 +105,7 @@ namespace NL_text_representation.DEPRICATED
             return wordForms;
         }
 
-        private IEnumerable<WordCMR> GetCMR(WordForm wordForm)
+        private IEnumerable<WordCMR> GetCMR(MorphologicalForm wordForm)
         {
             List<WordCMR> cmrs = new();
             if (wordForm.Token.Name.Equals("number"))

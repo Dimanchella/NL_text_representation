@@ -11,9 +11,9 @@ namespace NL_text_representation.DEPRICATED
     {
         private readonly string lexeme;
         private readonly LexemeClass @class;
-        private readonly WordForm morph;
+        private readonly MorphologicalForm morph;
 
-        public WordCMR(string lexeme, LexemeClass @class, WordForm morph)
+        public WordCMR(string lexeme, LexemeClass @class, MorphologicalForm morph)
         {
             this.lexeme = lexeme;
             this.@class = @class;
@@ -23,7 +23,7 @@ namespace NL_text_representation.DEPRICATED
         public string Unit { get => morph.Word; }
         public string Lexeme { get => lexeme; }
         public LexemeClass Class { get => @class; }
-        public WordForm Morph { get => morph; }
+        public MorphologicalForm Morph { get => morph; }
 
         public bool HasClass { get => @class != null; }
 

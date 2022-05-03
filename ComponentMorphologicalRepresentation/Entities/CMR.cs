@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
 {
-    public class WordTerm
+    public class CMR
     {
         private readonly Term term;
-        private readonly WordForm[] forms;
+        private readonly MorphologicalForm[] forms;
         private readonly string lexeme;
-        private int mainFormIndex;
+        private readonly int mainFormIndex;
 
-        public WordTerm(Term term, IEnumerable<WordForm> forms)
+        public CMR(Term term, IEnumerable<MorphologicalForm> forms)
         {
             this.term = term;
             this.forms = forms.ToArray();
@@ -72,7 +72,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
         public string Lexeme { get => lexeme; }
         public int Length { get => forms.Length; }
         public Term Term { get => term; }
-        public WordForm Form { get => forms[mainFormIndex]; }
+        public MorphologicalForm Form { get => forms[mainFormIndex]; }
         public bool HasClass { get => term != null; }
         
 

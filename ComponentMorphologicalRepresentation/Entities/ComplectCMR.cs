@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
 {
-    public class VariableCMR
+    public class ComplectCMR
     {
         private readonly string word;
-        private readonly WordTerm[] cmrs;
+        private readonly CMR[] cmrs;
 
-        public VariableCMR(string word, IEnumerable<WordTerm> cmrs)
+        public ComplectCMR(string word, IEnumerable<CMR> cmrs)
         {
             this.word = word;
             this.cmrs = cmrs.ToArray();
@@ -31,7 +31,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
         }
 
         public string Unit { get => word; }
-        public IEnumerable<WordTerm> GetCMRs(CMRClassFilters filter = CMRClassFilters.All)
+        public IEnumerable<CMR> GetCMRs(CMRClassFilters filter = CMRClassFilters.All)
         {
             switch (filter)
             {
@@ -45,7 +45,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
             }
         }
 
-        public IEnumerable<WordTerm> GetCMRsByTrates(CMRClassFilters filter, Operations operation, params string[] trates)
+        public IEnumerable<CMR> GetCMRsByTrates(CMRClassFilters filter, Operations operation, params string[] trates)
         {
             return GetCMRs(filter).Where(cmr =>
             {

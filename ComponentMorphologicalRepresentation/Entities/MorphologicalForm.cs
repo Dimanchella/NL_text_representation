@@ -8,12 +8,12 @@ using DeepMorphy.Model;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
 {
-    public class WordForm
+    public class MorphologicalForm
     {
         private readonly Token token;
         private readonly Tag traits;
 
-        public WordForm(Token token, Tag tag)
+        public MorphologicalForm(Token token, Tag tag)
         {
             this.token = token;
             traits = tag;
