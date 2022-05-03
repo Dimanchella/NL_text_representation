@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 using NL_text_representation.ComponentMorphologicalRepresentation;
+using NL_text_representation.SemBuilding;
 
 namespace NL_text_representation
 {
@@ -28,8 +29,15 @@ namespace NL_text_representation
                     wordReps.ToList()
                         .ForEach(wordRep => wordRep.GetCMRs().ToList()
                             .ForEach(cmr => Console.WriteLine(cmr.ToString())));
+
+                    SemBuilder b = new SemBuilder();
+
+                    Console.WriteLine("\n" + b.getSemReprRequest(str));
                     Console.WriteLine("\n****************************************************\n");
+
+                    
                 }
+
             }
             catch (Exception e)
             {
