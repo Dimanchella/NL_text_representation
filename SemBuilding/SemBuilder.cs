@@ -11,7 +11,6 @@ namespace NL_text_representation.SemBuilding
     {
         public String getBaseForm(IEnumerable<VariableCMR> cmr, int index)
         {
-
             var word = cmr.ToList().GetRange(index, 1).First();
             return word.GetCMRs()
                       .Select(cmr => cmr.Form.Lemma)
@@ -60,7 +59,6 @@ namespace NL_text_representation.SemBuilding
             {
                 return inputForm;
             }
-
 
         }
 

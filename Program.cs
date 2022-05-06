@@ -51,7 +51,6 @@ namespace NL_text_representation
 
                     result.ForEach(resultRep => Console.WriteLine(resultRep.ToString()));
                     Console.WriteLine("\n****************************************************\n");
-
                     
                 }
 
