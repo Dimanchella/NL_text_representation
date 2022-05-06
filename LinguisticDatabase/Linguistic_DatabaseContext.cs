@@ -25,6 +25,9 @@ namespace LinguisticDatabase
         public virtual DbSet<MorphologicalTrait> MorphologicalTraits { get; set; }
         public virtual DbSet<MorphologicalTraitSet> MorphologicalTraitSets { get; set; }
         public virtual DbSet<MorphologicalTraitType> MorphologicalTraitTypes { get; set; }
+        public virtual DbSet<ParamsKrepr> ParamsKreprs { get; set; }
+        public virtual DbSet<ParamsKreprToOntology> ParamsKreprToOntologies { get; set; }
+        public virtual DbSet<ParamsOntology> ParamsOntologies { get; set; }
         public virtual DbSet<PrepositionFrame> PrepositionFrames { get; set; }
         public virtual DbSet<QuestionRoleFrame> QuestionRoleFrames { get; set; }
         public virtual DbSet<Term> Terms { get; set; }
@@ -93,8 +96,8 @@ namespace LinguisticDatabase
                     .HasName("Meanings_pkey");
 
                 entity.Property(e => e.IdMeaning)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID_meaning");
+                    .HasColumnName("ID_meaning")
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.IdType).HasColumnName("ID_type");
 
@@ -228,6 +231,56 @@ namespace LinguisticDatabase
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("Trait_type");
+            });
+
+            modelBuilder.Entity<ParamsKrepr>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsKrepr_pkey");
+
+                entity.ToTable("ParamsKrepr");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
+            });
+
+            modelBuilder.Entity<ParamsKreprToOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdMatch)
+                    .HasName("ParamsKreprToOntology_pkey");
+
+                entity.ToTable("ParamsKreprToOntology");
+
+                entity.Property(e => e.IdMatch)
+                    .HasColumnName("id_match")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.IdKreprParam).HasColumnName("id_Krepr_param");
+
+                entity.Property(e => e.IdOntologyParam).HasColumnName("id_Ontology_param");
+            });
+
+            modelBuilder.Entity<ParamsOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsOntology_pkey");
+
+                entity.ToTable("ParamsOntology");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
             });
 
             modelBuilder.Entity<PrepositionFrame>(entity =>

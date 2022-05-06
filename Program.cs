@@ -6,6 +6,7 @@ using System.Text;
 
 using NL_text_representation.ComponentMorphologicalRepresentation;
 using NL_text_representation.SemBuilding;
+using NL_text_representation.SPARQL;
 
 namespace NL_text_representation
 {
@@ -32,7 +33,23 @@ namespace NL_text_representation
 
                     SemBuilder b = new SemBuilder();
 
-                    Console.WriteLine("\n" + b.getSemReprRequest(str));
+                    String repr = b.getSemReprRequest(str);
+
+                    Console.WriteLine("\n" + repr);
+
+                    SparqlBuilder sb = new SparqlBuilder();
+
+                    String request = sb.getSparql(repr);
+
+                    Console.WriteLine("\n" + request);
+
+                    SparqlRunner sr = new SparqlRunner();
+
+                    Console.WriteLine("####################################################\n");
+
+                    var result = sr.runQuery(request);
+
+                    result.ForEach(resultRep => Console.WriteLine(resultRep.ToString()));
                     Console.WriteLine("\n****************************************************\n");
 
                     
