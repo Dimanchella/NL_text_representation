@@ -127,7 +127,21 @@ namespace NL_text_representation.SemBuilding
 
             var nouns = findNouns(cmr);
 
-            if (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1)
+            if (nouns.Count() == 1)
+            {
+                int posNoun1 = nouns[0];
+
+                String base1 = getBaseForm(cmr, posNoun1);
+                String semnoun1 = getSemMaining(base1);
+
+                String concept1 = semnoun1;
+                if (posNoun1 > 0)
+                {
+                    concept1 += "*" + ConstructSemImage(cmr, 0, posNoun1);
+                }
+                result = concept1;
+            }
+            else if (nouns.Count() == 2 || (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1))
             {
                 int posNoun1 = nouns[0];
                 int posNoun2 = nouns[1];
