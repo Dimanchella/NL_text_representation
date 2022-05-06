@@ -36,7 +36,32 @@ namespace NL_text_representation.SemBuilding
 
             String[] arg2 = rel[1].Split(',');
 
-            return "(" + rel[0] + ", " + arg2[1].Trim();
+            return "(" + rel[0] + ",=," + arg2[1].Trim();
+        }
+
+        public String modeficationFormConcept(String inputForm)
+        {
+            String[] rel = inputForm.Split('(');
+
+            if (rel.Length > 1)
+            {
+                String[] arg2 = rel[1].Split(',');
+                if (arg2.Length == 2)
+                {
+                    return arg2[1].Remove(arg2[1].Length - 1).Trim();
+                }
+                else
+                {
+                    return arg2[2].Remove(arg2[2].Length - 1).Trim();
+                }
+
+            }
+            else
+            {
+                return inputForm;
+            }
+
+
         }
 
         public String ConstructSemImage(IEnumerable<VariableCMR> cmr, int j, int m)
@@ -48,7 +73,7 @@ namespace NL_text_representation.SemBuilding
             String result = "";
             adjs.ForEach(x => { result += modeficationForm(getSemMaining(getBaseForm(cmr, counter))); counter++; });
 
-            return result;
+            return result.Replace(")(", ")*(");
 
         }
 
@@ -116,7 +141,8 @@ namespace NL_text_representation.SemBuilding
                 {
                     prep = getBaseForm(cmr, posPrep);
                 }
-                else{
+                else
+                {
                     prep = "#nil#";
                     posPrep = posNoun1;
                 }
@@ -129,7 +155,7 @@ namespace NL_text_representation.SemBuilding
                 String concept1 = semnoun1;
                 if (posNoun1 > 0)
                 {
-                    concept1 += " * " + ConstructSemImage(cmr, 0, posNoun1);
+                    concept1 += "*" + ConstructSemImage(cmr, 0, posNoun1);
                 }
 
                 String base2 = getBaseForm(cmr, posNoun2);
@@ -149,7 +175,7 @@ namespace NL_text_representation.SemBuilding
                     concept2 += "*(Назв, " + cmr.ToList().GetRange(posNoun2 + 1, 1).First().Unit + ")";
                 }
 
-                result = concept1 + "(" + frame + ", " + concept2 + ")";
+                result = concept1 + "*(" + frame + ",=," + modeficationFormConcept(concept2) + ")";
             }
             else
             {
