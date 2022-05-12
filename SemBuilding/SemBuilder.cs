@@ -141,6 +141,7 @@ namespace NL_text_representation.SemBuilding
                 }
                 result = concept1;
             }
+
             else if (nouns.Count() == 2 || (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1))
             {
                 int posNoun1 = nouns[0];

@@ -57,8 +57,9 @@ namespace NL_text_representation.SPARQL
                 if (int.TryParse(triple[2], out _))
                 {
                     translateValue.Add(triple[2]);
+
                 }
-                else if (isSpecialConst(triple[2]))//TODO не может быть несколько сортировок
+                else if (isSpecialConst(triple[2]))
                 {
                     sorting = specialConst[triple[2]] + "(?s" + numVar + ")";
                 }
@@ -69,7 +70,7 @@ namespace NL_text_representation.SPARQL
 
                 if (triple[1].Equals("="))
                 {
-                    if (isSpecialConst(triple[2]))//TODO не может быть несколько сортировок
+                    if (isSpecialConst(triple[2]))
                     {
                         querySparql += createEqTripleWithSortVar(translatePredicate, numVar);
                     }
@@ -95,9 +96,9 @@ namespace NL_text_representation.SPARQL
             return querySparql;
         }
 
-        private bool isSpecialConst(String input)
+        private bool isSpecialConst(String maybeConst)
         {
-            return specialConst.ContainsKey(input);
+            return specialConst.ContainsKey(maybeConst);
         }
 
 
@@ -119,15 +120,15 @@ namespace NL_text_representation.SPARQL
                 "    ?var1 ?p" + numPredicate.ToString() + " ?v" + numPredicate.ToString() + " .\n";
         }
 
-        private String createEqTripleWithSortVar(List<String> values, int numPredicate)
+        private String createEqTripleWithSortVar(List<String> predicates, int numPredicate)
         {
-            return "    values ?p" + numPredicate.ToString() + " " + createValues(values) + " .\n" +
+            return "    values ?p" + numPredicate.ToString() + " " + createValues(predicates) + " .\n" +
                 "    ?var1 ?p" + numPredicate.ToString() + " ?s" + numPredicate.ToString() + " .\n";
         }
 
-        private String createCompareTriple(List<String> values, int numPredicate, String comparisonSign, String comparisonValue)//TODO  
+        private String createCompareTriple(List<String> predicates, int numPredicate, String comparisonSign, String comparisonValue)//TODO  
         {
-            return "    values ?p" + numPredicate.ToString() + " " + createValues(values) + " .\n    ?var1 ?p" + numPredicate.ToString() + " ?var" + numPredicate.ToString() + " .\n"
+            return "    values ?p" + numPredicate.ToString() + " " + createValues(predicates) + " .\n    ?var1 ?p" + numPredicate.ToString() + " ?var" + numPredicate.ToString() + " .\n"
                 + "    filter (?var" + numPredicate.ToString() + " " + comparisonSign + " " + comparisonValue + ") . \n";
         }
 
