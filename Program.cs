@@ -19,7 +19,7 @@ namespace NL_text_representation
                 reader.Close();
                 input = input.Select(str => str.Trim()).ToList();
 
-                TermsAnalizer termsAnalizer = new();
+                TermsSearcher termsAnalizer = new();
 
                 foreach (string str in input)
                 {

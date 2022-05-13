@@ -10,7 +10,7 @@ using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation
 {
-    public class TermsAnalizer
+    public class TermsSearcher
     {
         private static readonly MorphAnalyzer ma = new(withLemmatization: true);
         private static readonly Dictionary<string, string> tokenNamesToLexemes = LinkTokenNamesToLexemes();
