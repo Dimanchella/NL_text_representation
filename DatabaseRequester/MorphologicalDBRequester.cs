@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LinguisticDatabase;
-using NL_text_representation.DEPRICATED;
 using Term = NL_text_representation.ComponentMorphologicalRepresentation.Entities.Term;
 using TermComponent = NL_text_representation.ComponentMorphologicalRepresentation.Entities.TermComponent;
 using NL_text_representation.DatabaseRequester.Entities;
@@ -18,24 +17,6 @@ namespace NL_text_representation.DatabaseRequester
         
         private static readonly List<DBTerms> dbTerms = GetTermsFromDB();
         private static readonly List<DBTermComponents> dbTermComponents = GetTermComponentsFromDB();
-
-        public static IEnumerable<LexemeClass> GetLexemes()
-        {
-            try
-            {
-                //    return from clOfLex in dbContext.ClassesOfLexemes
-                //           select new LexemeClass(
-                //               clOfLex.IdLexemeNavigation.Lexeme1,
-                //               clOfLex.IdTraitPartOfSpeechNavigation.Trait,
-                //               clOfLex.IdTraitSubclassNavigation.Trait
-                //               );
-                return null;
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Ошибка запроса: {e.Message}");
-            }
-        }
 
         public static IEnumerable<Term> GetTermsOnLexeme(string firstLexeme)
         {

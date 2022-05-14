@@ -1,0 +1,24 @@
+﻿<Window x:Class="nli_to_lod.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:nli_to_lod"
+        mc:Ignorable="d"
+        Title="Естественно-языковой интерфейс к LOD" Height="450" Width="800">
+    <Grid>
+        <Label Content="Введите запрос на русском языке" HorizontalAlignment="Left" Margin="120,54,0,0" VerticalAlignment="Top" FontSize="14"/>
+        <TextBox x:Name="inputRequest" HorizontalAlignment="Left" Margin="120,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="560" FontSize="14"/>
+        <Button Content="Выполнить" HorizontalAlignment="Center" Margin="0,140,0,0" VerticalAlignment="Top" Height="47" Width="210" Click="Button_Click" FontSize="14"/>
+        <DataGrid x:Name="results" Margin="0,217,0,0" AutoGenerateColumns="False" FontSize="14" SelectionChanged="results_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridHyperlinkColumn
+                    Width="*"
+                        Header="Результат выполнения запроса"
+                        Binding="{Binding Path=Value}"
+                        IsReadOnly="True">
+                </DataGridHyperlinkColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

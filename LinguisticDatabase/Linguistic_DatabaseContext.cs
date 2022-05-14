@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -25,6 +23,9 @@ namespace LinguisticDatabase
         public virtual DbSet<MorphologicalTrait> MorphologicalTraits { get; set; }
         public virtual DbSet<MorphologicalTraitSet> MorphologicalTraitSets { get; set; }
         public virtual DbSet<MorphologicalTraitType> MorphologicalTraitTypes { get; set; }
+        public virtual DbSet<ParamsKrepr> ParamsKreprs { get; set; }
+        public virtual DbSet<ParamsKreprToOntology> ParamsKreprToOntologies { get; set; }
+        public virtual DbSet<ParamsOntology> ParamsOntologies { get; set; }
         public virtual DbSet<PrepositionFrame> PrepositionFrames { get; set; }
         public virtual DbSet<QuestionRoleFrame> QuestionRoleFrames { get; set; }
         public virtual DbSet<Term> Terms { get; set; }
@@ -39,8 +40,7 @@ namespace LinguisticDatabase
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseNpgsql("Host=10.243.57.89;Port=5432;Database=Linguistic_Database;Username=dima;Password=dima");
+                optionsBuilder.UseNpgsql(System.Configuration.ConfigurationManager.ConnectionStrings["LDB"].ConnectionString);
             }
         }
 
@@ -93,8 +93,8 @@ namespace LinguisticDatabase
                     .HasName("Meanings_pkey");
 
                 entity.Property(e => e.IdMeaning)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID_meaning");
+                    .HasColumnName("ID_meaning")
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.IdType).HasColumnName("ID_type");
 
@@ -228,6 +228,56 @@ namespace LinguisticDatabase
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("Trait_type");
+            });
+
+            modelBuilder.Entity<ParamsKrepr>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsKrepr_pkey");
+
+                entity.ToTable("ParamsKrepr");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
+            });
+
+            modelBuilder.Entity<ParamsKreprToOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdMatch)
+                    .HasName("ParamsKreprToOntology_pkey");
+
+                entity.ToTable("ParamsKreprToOntology");
+
+                entity.Property(e => e.IdMatch)
+                    .HasColumnName("id_match")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.IdKreprParam).HasColumnName("id_Krepr_param");
+
+                entity.Property(e => e.IdOntologyParam).HasColumnName("id_Ontology_param");
+            });
+
+            modelBuilder.Entity<ParamsOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsOntology_pkey");
+
+                entity.ToTable("ParamsOntology");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
             });
 
             modelBuilder.Entity<PrepositionFrame>(entity =>
