@@ -24,20 +24,17 @@ namespace NL_text_representation
 
                 foreach (string str in input)
                 {
-                    termsAnalizer.Text = str;
-                    var wordReps = termsAnalizer.GetCMR();
+                    termsAnalizer.FindCMR(str);
+                    var wordReps = termsAnalizer.CMR;
                     wordReps.ToList()
-                        .ForEach(wordRep => wordRep.GetCMRs().ToList()
+                        .ForEach(wordRep => wordRep.CMUs.ToList()
                             .ForEach(cmr => Console.WriteLine(cmr.ToString())));
 
                     SemBuilder b = new SemBuilder();
 
                     Console.WriteLine("\n" + b.getSemReprRequest(str));
                     Console.WriteLine("\n****************************************************\n");
-
-                    
                 }
-
             }
             catch (Exception e)
             {

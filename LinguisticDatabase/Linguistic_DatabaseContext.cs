@@ -25,12 +25,16 @@ namespace LinguisticDatabase
         public virtual DbSet<MorphologicalTrait> MorphologicalTraits { get; set; }
         public virtual DbSet<MorphologicalTraitSet> MorphologicalTraitSets { get; set; }
         public virtual DbSet<MorphologicalTraitType> MorphologicalTraitTypes { get; set; }
+        public virtual DbSet<ParamsKrepr> ParamsKreprs { get; set; }
+        public virtual DbSet<ParamsKreprToOntology> ParamsKreprToOntologies { get; set; }
+        public virtual DbSet<ParamsOntology> ParamsOntologies { get; set; }
         public virtual DbSet<PrepositionFrame> PrepositionFrames { get; set; }
         public virtual DbSet<QuestionRoleFrame> QuestionRoleFrames { get; set; }
         public virtual DbSet<Term> Terms { get; set; }
         public virtual DbSet<TermAddMeaning> TermAddMeanings { get; set; }
         public virtual DbSet<TermComponent> TermComponents { get; set; }
         public virtual DbSet<TermMainMeaning> TermMainMeanings { get; set; }
+        public virtual DbSet<TermMeaning> TermMeanings { get; set; }
         public virtual DbSet<VerbPrepositionFrame> VerbPrepositionFrames { get; set; }
         public virtual DbSet<Word> Words { get; set; }
         public virtual DbSet<WordForm> WordForms { get; set; }
@@ -93,8 +97,8 @@ namespace LinguisticDatabase
                     .HasName("Meanings_pkey");
 
                 entity.Property(e => e.IdMeaning)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID_meaning");
+                    .HasColumnName("ID_meaning")
+                    .UseIdentityAlwaysColumn();
 
                 entity.Property(e => e.IdType).HasColumnName("ID_type");
 
@@ -230,6 +234,56 @@ namespace LinguisticDatabase
                     .HasColumnName("Trait_type");
             });
 
+            modelBuilder.Entity<ParamsKrepr>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsKrepr_pkey");
+
+                entity.ToTable("ParamsKrepr");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
+            });
+
+            modelBuilder.Entity<ParamsKreprToOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdMatch)
+                    .HasName("ParamsKreprToOntology_pkey");
+
+                entity.ToTable("ParamsKreprToOntology");
+
+                entity.Property(e => e.IdMatch)
+                    .HasColumnName("id_match")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.IdKreprParam).HasColumnName("id_Krepr_param");
+
+                entity.Property(e => e.IdOntologyParam).HasColumnName("id_Ontology_param");
+            });
+
+            modelBuilder.Entity<ParamsOntology>(entity =>
+            {
+                entity.HasKey(e => e.IdParam)
+                    .HasName("ParamsOntology_pkey");
+
+                entity.ToTable("ParamsOntology");
+
+                entity.Property(e => e.IdParam)
+                    .HasColumnName("id_param")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Param)
+                    .IsRequired()
+                    .HasColumnType("character varying")
+                    .HasColumnName("param");
+            });
+
             modelBuilder.Entity<PrepositionFrame>(entity =>
             {
                 entity.HasKey(e => e.IdFrame)
@@ -272,6 +326,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.PrepositionFrames)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Term_preposition");
 
                 entity.HasOne(d => d.IdTraitCase2Navigation)
@@ -307,6 +362,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.QuestionRoleFrameIdTermPrepositionNavigations)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Term_preposition");
 
                 entity.HasOne(d => d.IdTermPronounInterrogativeRelativeAdverbNavigation)
@@ -434,6 +490,19 @@ namespace LinguisticDatabase
                     .HasConstraintName("Term");
             });
 
+            modelBuilder.Entity<TermMeaning>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("TermMeaning");
+
+                entity.Property(e => e.IdMeaningMain).HasColumnName("ID_meaning_main");
+
+                entity.Property(e => e.IdTerm).HasColumnName("ID_term");
+
+                entity.Property(e => e.Meaning).HasMaxLength(256);
+            });
+
             modelBuilder.Entity<VerbPrepositionFrame>(entity =>
             {
                 entity.HasKey(e => e.IdFrame)
@@ -474,6 +543,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.VerbPrepositionFrames)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("	 Term_preposition");
 
                 entity.HasOne(d => d.IdTraitCaseNavigation)

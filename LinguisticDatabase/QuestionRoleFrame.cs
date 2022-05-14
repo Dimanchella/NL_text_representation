@@ -8,7 +8,7 @@ namespace LinguisticDatabase
     public partial class QuestionRoleFrame
     {
         public long IdFrame { get; set; }
-        public long? IdTermPreposition { get; set; }
+        public long IdTermPreposition { get; set; }
         public long IdTermPronounInterrogativeRelativeAdverb { get; set; }
         public long IdMeaningFrame { get; set; }
         public string Comment { get; set; }

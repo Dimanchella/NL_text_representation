@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
 {
-    public class CMR
+    public class ComponentMorphologicalUnit
     {
         private readonly Term term;
         private readonly MorphologicalForm[] forms;
         private readonly string lexeme;
         private readonly int mainFormIndex;
 
-        public CMR(Term term, IEnumerable<MorphologicalForm> forms)
+        public ComponentMorphologicalUnit(Term term, IEnumerable<MorphologicalForm> forms)
         {
             this.term = term;
             this.forms = forms.ToArray();
