@@ -8,7 +8,7 @@ namespace LinguisticDatabase
     public partial class PrepositionFrame
     {
         public long IdFrame { get; set; }
-        public long? IdTermPreposition { get; set; }
+        public long IdTermPreposition { get; set; }
         public long IdMeaningAddNoun1 { get; set; }
         public long IdMeaningAddNoun2 { get; set; }
         public long IdTraitCase2 { get; set; }

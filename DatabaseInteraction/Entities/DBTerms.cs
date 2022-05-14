@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NL_text_representation.DatabaseRequester.Entities
+namespace NL_text_representation.DatabaseInteraction.Entities
 {
     public class DBTerms
     {

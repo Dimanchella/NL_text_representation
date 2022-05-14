@@ -25,6 +25,8 @@ namespace NL_text_representation.SemBuilding
                         join termComponent in context.TermComponents on meaning.IdTerm equals termComponent.IdTerm
                         where termComponent.IdLexemeNavigation.Lexeme1.ToLower().Equals(baseForm.ToLower())
                         select meaning.IdMeaningMainNavigation.Meaning1;
+            
+            // TODO Сделать поиск по ИД термина
 
             return query.First();
         }

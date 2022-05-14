@@ -4,3 +4,4 @@
 
 /.vs/nli-to-lod
 /obj
+/bin/Debug/net5.0-windows

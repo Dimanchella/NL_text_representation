@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using DeepMorphy;
-using NL_text_representation.DatabaseRequester;
 using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
+using NL_text_representation.DatabaseInteraction;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation
 {
@@ -74,18 +71,18 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
             List<ComplectCMR> variableCMRs = new();
             for (int i = 0; i < tokens.Count && !tokens[i].IsEOS; i++)
             {
-                List<CMR> wordTerms = new();
+                List<ComponentMorphologicalUnit> wordTerms = new();
                 foreach (var wordForm in GetDeepMorphyRep(tokens[i]))
                 {
                     List<Term> terms;
                     if (tokenNamesToLexemes.ContainsKey(tokens[i].Name))
                     {
-                        terms = MorphologicalDBRequester.GetTermsOnLexeme(tokenNamesToLexemes[tokens[i].Name])
+                        terms = DatabaseRequester.GetTermsOnLexeme(tokenNamesToLexemes[tokens[i].Name])
                             .OrderByDescending(term => term.Components.Count()).ToList();
                     }
                     else
                     {
-                        terms = MorphologicalDBRequester.GetTermsOnLexeme(wordForm.Lemma)
+                        terms = DatabaseRequester.GetTermsOnLexeme(wordForm.Lemma)
                             .OrderByDescending(term => term.Components.Count()).ToList();
                     }
 
@@ -120,9 +117,9 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
             return variableCMRs;
         }
 
-        private List<CMR> EnumerateConponents(MorphologicalForm firstForm, Term term, int indexToken)
+        private List<ComponentMorphologicalUnit> EnumerateConponents(MorphologicalForm firstForm, Term term, int indexToken)
         {
-            List<CMR> wordTerms = new();
+            List<ComponentMorphologicalUnit> wordTerms = new();
             List<List<MorphologicalForm>> combinationsWordForms = new();
             List<MorphologicalForm> firstComb = new List<MorphologicalForm>();
             firstComb.Add(firstForm);

@@ -9,9 +9,9 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
     public class ComplectCMR
     {
         private readonly string word;
-        private readonly CMR[] cmrs;
+        private readonly ComponentMorphologicalUnit[] cmrs;
 
-        public ComplectCMR(string word, IEnumerable<CMR> cmrs)
+        public ComplectCMR(string word, IEnumerable<ComponentMorphologicalUnit> cmrs)
         {
             this.word = word;
             this.cmrs = cmrs.ToArray();
@@ -31,7 +31,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
         }
 
         public string Unit { get => word; }
-        public IEnumerable<CMR> GetCMRs(CMRClassFilters filter = CMRClassFilters.All)
+        public IEnumerable<ComponentMorphologicalUnit> GetCMRs(CMRClassFilters filter = CMRClassFilters.All)
         {
             switch (filter)
             {
@@ -45,7 +45,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
             }
         }
 
-        public IEnumerable<CMR> GetCMRsByTrates(CMRClassFilters filter, Operations operation, params string[] trates)
+        public IEnumerable<ComponentMorphologicalUnit> GetCMRsByTrates(CMRClassFilters filter, Operations operation, params string[] trates)
         {
             return GetCMRs(filter).Where(cmr =>
             {

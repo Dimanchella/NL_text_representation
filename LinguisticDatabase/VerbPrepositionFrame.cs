@@ -17,7 +17,7 @@ namespace LinguisticDatabase
         public long IdTraitVerbForm { get; set; }
         public long IdTraitVerbReflect { get; set; }
         public long IdTraitVerbVoice { get; set; }
-        public long? IdTermPreposition { get; set; }
+        public long IdTermPreposition { get; set; }
         public long IdTraitCase { get; set; }
         public long IdMeaningFrame { get; set; }
         public string Comment { get; set; }
