@@ -1,6 +1,7 @@
 ﻿using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities
 {
@@ -46,10 +47,12 @@ namespace NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities
 
         public override string ToString()
         {
+            StringBuilder sb = new();
+            nounAddMeanings.ForEach(meaning => sb.Append($"{meaning} "));
             return $"{cmu}\n    ({verbMeaning}, "
-                + $"[{verbForm} {verbReflection} {verbVoice}],"
+                + $"{verbForm}, {verbReflection}, {verbVoice}, "
                 + $"{prepositionTerm.AllLexemes}, "
-                + $"{nounAddMeanings}, "
+                + $"[{sb.ToString().Trim()}], "
                 + $"{nounCase}) {meaning}";
         }
     }

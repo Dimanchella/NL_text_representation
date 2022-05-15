@@ -27,22 +27,5 @@ namespace NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities
             }
             return sb.ToString(); 
         }
-
-        public static IEnumerable<string> MakeAddMeaningsArray(params string[] addMeanings)
-        {
-            return addMeanings;
-        }
-        public static IEnumerable<string> MakeAddMeaningsArray(IEnumerable<string> addMeaningsArr, params string[] addMeanings)
-        {
-            string[] newAMArr = new string[addMeaningsArr.ToArray().Length + addMeanings.Length];
-            for (int i = 0; i < addMeaningsArr.ToArray().Length || i < addMeanings.Length; i++)
-            {
-                if (i < addMeaningsArr.ToArray().Length)
-                    newAMArr[i] = addMeaningsArr.ToArray()[i];
-                if (i < addMeanings.Length)
-                    newAMArr[i + addMeaningsArr.ToArray().Length] = addMeanings[i];
-            }
-            return addMeanings;
-        }
     }
 }

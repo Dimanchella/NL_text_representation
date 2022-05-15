@@ -67,6 +67,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
         private List<CMUComplect> GetCMUComplects()
         {
             List<CMUComplect> cmr = new();
+            int lexemePosition = 0;
             for (int i = 0; i < tokens.Count; i++)
             {
                 List<ComponentMorphologicalUnit> cmus = new();
@@ -89,7 +90,33 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                         int maxComponents = terms[0].Components.Count();
                         for (int j = 0; j < terms.Count && terms[j].Components.Count() >= maxComponents; j++)
                         {
-                            var tempWT = EnumerateConponents(wordForm, terms[j], i);
+                            var tempWT = EnumerateConponents(wordForm, terms[j], i, lexemePosition);
+                            if (tempWT.Count == 0 && j + 1 < terms.Count)
+                            {
+                                maxComponents = terms[j + 1].Components.Count();
+                            }
+                            else
+                            {
+                                cmus.AddRange(tempWT);
+                                i += maxComponents - 1;
+                            }
+                        }
+                    }
+                }
+
+                if (cmus.Count == 0)
+                {
+                    var tag = ma.TagHelper.CreateTag(post: "сущ", gndr: "муж", nmbr: "ед", @case: "им");
+                    MorphologicalForm wordForm = new(tokens[i], tag);
+                    List<Term> terms = DatabaseRequester.GetTermsOnLexeme(wordForm.Lemma)
+                            .OrderByDescending(term => term.Components.Count()).ToList();
+
+                    if (terms.Count > 0)
+                    {
+                        int maxComponents = terms[0].Components.Count();
+                        for (int j = 0; j < terms.Count && terms[j].Components.Count() >= maxComponents; j++)
+                        {
+                            var tempWT = EnumerateConponents(wordForm, terms[j], i, lexemePosition);
                             if (tempWT.Count == 0 && j + 1 < terms.Count)
                             {
                                 maxComponents = terms[j + 1].Components.Count();
@@ -112,10 +139,11 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                     }
                 }
                 cmr.Add(new(tokens[i].Lexeme, cmus.Where(cmu => cmu.Length == maxLength)));
+                lexemePosition++;
             }
             return cmr;
         }
-        private List<ComponentMorphologicalUnit> EnumerateConponents(MorphologicalForm firstForm, Term term, int indexToken)
+        private List<ComponentMorphologicalUnit> EnumerateConponents(MorphologicalForm firstForm, Term term, int indexToken, int lexemePosition)
         {
             List<ComponentMorphologicalUnit> wordTerms = new();
             List<List<MorphologicalForm>> combinationsWordForms = new();
@@ -150,7 +178,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                     combinationsWordForms = newCombinations;
                 }
             }
-            combinationsWordForms.ForEach(combination => wordTerms.Add(new(term, combination)));
+            combinationsWordForms.ForEach(combination => wordTerms.Add(new(term, combination, lexemePosition)));
             return wordTerms;
         }
         private List<MorphologicalForm> CompareComponentWithToken(TermComponent component, Token token, bool firstMatch)

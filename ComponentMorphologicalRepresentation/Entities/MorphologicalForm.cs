@@ -15,8 +15,6 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
             traits = new MorphologicalTrates(tag, token);
         }
 
-
-
         public string Word { get => token.Lexeme; }
         public string Lemma
         {

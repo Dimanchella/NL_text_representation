@@ -327,7 +327,7 @@ namespace NL_text_representation.DatabaseInteraction
                 reflectionMatch = true;
             }
             if (frame.VerbVoice.Equals(cmuVerb.Form.Traits["залог"])
-                || frame.VerbVoice.Equals("#nil#"))
+                || frame.VerbVoice.Equals("#nil#") || cmuVerb.Form.Traits["залог"] == null)
             {
                 voiceMatch = true;
             }

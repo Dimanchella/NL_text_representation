@@ -15,7 +15,7 @@ namespace NL_text_representation
         {
             try
             {
-                StreamReader reader = new("E:\\Dimanchella_save\\МАИ\\Диплом\\Проекты\\NL_text_representation\\resources\\input3.txt", Encoding.UTF8);
+                StreamReader reader = new("E:\\Dimanchella_save\\МАИ\\Диплом\\Проекты\\NL_text_representation\\resources\\input4.txt", Encoding.UTF8);
                 List<string> input = new(reader.ReadToEnd().Trim().Split('\n'));
                 reader.Close();
                 input = input.Select(str => str.Trim()).ToList();
@@ -27,7 +27,7 @@ namespace NL_text_representation
                 {
                     Console.WriteLine("\n################################\n"
                         + str
-                        + "\n################################\n");
+                        + "\n################################");
                     try
                     {
                         termsSearcher.FindCMR(str);
@@ -38,19 +38,19 @@ namespace NL_text_representation
                         var pfp = lexicalBasis.PFP;
                         var vpfp = lexicalBasis.VPFP;
 
-                        Console.WriteLine("\n--------LexicalSemanticProjection--------\n");
+                        Console.WriteLine("\n--------LexicalSemanticProjection--------");
                         lsp.ToList()
                             .ForEach(complect => complect.LSUs.ToList()
                                 .ForEach(unit => Console.WriteLine(unit.ToString())));
-                        Console.WriteLine("\n--------QuestionRoleFrameProjection--------\n");
+                        Console.WriteLine("\n--------QuestionRoleFrameProjection--------");
                         qrfp.ToList()
                             .ForEach(complect => complect.QRFs.ToList()
                                 .ForEach(frame => Console.WriteLine(frame.ToString())));
-                        Console.WriteLine("\n--------PrepositionFrameProjection--------\n");
+                        Console.WriteLine("\n--------PrepositionFrameProjection--------");
                         pfp.ToList()
                             .ForEach(complect => complect.PFs.ToList()
                                 .ForEach(frame => Console.WriteLine(frame.ToString())));
-                        Console.WriteLine("\n--------VerbPrepositionFrameProjection--------\n");
+                        Console.WriteLine("\n--------VerbPrepositionFrameProjection--------");
                         vpfp.ToList()
                             .ForEach(complect => complect.VPFs.ToList()
                                 .ForEach(frame => Console.WriteLine(frame.ToString())));

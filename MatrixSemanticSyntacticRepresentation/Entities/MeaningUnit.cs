@@ -44,6 +44,5 @@ namespace NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities
 
         public ComponentMorphologicalUnit CMU { get => cmu; }
         public string Meaning { get => meaning; }
-
     }
 }
