@@ -97,7 +97,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                 }
             }
             else if (lastPos >= researchedString.Length)
-                return new Token("eos", null);
+                return new Token("eos", "#nil#");
             else if (IsSpaceSeparator(researchedString[lastPos]) && SkipSpaceSeparator())
                 return GetNextToken();
             else

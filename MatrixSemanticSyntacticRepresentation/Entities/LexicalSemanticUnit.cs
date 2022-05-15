@@ -5,27 +5,21 @@ using System.Text;
 
 namespace NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities
 {
-    public class LexicalSemanticUnit
+    public class LexicalSemanticUnit : MeaningUnit
     {
-        private readonly ComponentMorphologicalUnit cmu;
-        private readonly string mainMeaning;
         private readonly List<string> addMeanings;
 
-        public LexicalSemanticUnit(ComponentMorphologicalUnit cmu, string mainMeaning, IEnumerable<string> addMeanings)
+        public LexicalSemanticUnit(ComponentMorphologicalUnit cmu, string meaning, IEnumerable<string> addMeanings) : base(cmu, meaning)
         {
-            this.cmu = cmu;
-            this.mainMeaning = mainMeaning;
             this.addMeanings = addMeanings.ToList();
         }
 
-        public ComponentMorphologicalUnit CMU { get => cmu; }
-        public string MainMeaning { get => mainMeaning; }
         public IEnumerable<string> AddMeanings { get => addMeanings; }
 
         public override string ToString() 
         {
             StringBuilder sb = new();
-            sb.Append($"{cmu} ^ {mainMeaning}");
+            sb.Append($"{cmu}\n    {meaning}");
             if (addMeanings.Count > 0)
             {
                 sb.Append(" |");

@@ -15,42 +15,61 @@ namespace NL_text_representation.MatrixSemanticSyntacticRepresentation
         private List<LSUComplect> lsp = new();
         private List<PFComplect> pfp = new();
         private List<VPFComplect> vpfp = new();
+        private List<QRFComplect> qrfp = new();
 
         public IEnumerable<LSUComplect> LSP { get => lsp; }
+        public IEnumerable<QRFComplect> QRFP { get => qrfp; }
         public IEnumerable<PFComplect> PFP { get => pfp; }
         public IEnumerable<VPFComplect> VPFP { get => vpfp; }
 
-        public void ProjectLinguisticBasis(List<CMUComplect> cmr)
+        public void ProjectLinguisticBasis(IEnumerable<CMUComplect> cmr)
         {
-            foreach(var cmuc in cmr)
+            lsp.Clear();
+            pfp.Clear();
+            vpfp.Clear();
+            qrfp.Clear();
+            foreach (var cmuc in cmr)
             {
-                List<LexicalSemanticUnit> lsu = null;
-                List<PrepositionFrame> pf = null;
-                List<VerbPrepositionFrame> vpf = null;
+                List<LexicalSemanticUnit> lsus = null;
+                List<QuestionRoleFrame> qrfs = null;
+                List<PrepositionFrame> pfs = null;
+                List<VerbPrepositionFrame> vpfs = null;
                 foreach (ComponentMorphologicalUnit cmu in cmuc.CMUs)
                 {
                     switch(cmu.Term.PartOfSpeech)
                     {
                         case "предлог":
-                            pf = DatabaseRequester.GetPrepositionFramesOnCMUPrep(cmu).ToList();
+                            pfs = DatabaseRequester.GetPrepositionFramesOnCMUPrep(cmu).ToList();
+                            break;
+                        case "местоим":
+                            if (cmu.Term.SubClass.Equals("вопр-относ-местоим"))
+                            {
+                                qrfs = DatabaseRequester.GetQuestionRoleFramesOnCMUPronoun(cmu).ToList();
+                            }
+                            else
+                            {
+                                lsus = DatabaseRequester.GetLexicalSemanticMeaningsOnCMU(cmu).ToList();
+                            }
                             break;
                         case "глагол":
                         case "прич":
                         case "деепр":
-                            vpf = DatabaseRequester.GetVerbPrepositionFrameOnCMUVerb(cmu).ToList();
+                            vpfs = DatabaseRequester.GetVerbPrepositionFrameOnCMUVerb(cmu).ToList();
                             break;
                         default:
-                            lsu = DatabaseRequester.GetLexicalSemanticMeaningsOnCMU(cmu).ToList();
+                            lsus = DatabaseRequester.GetLexicalSemanticMeaningsOnCMU(cmu).ToList();
                             break;
                     }
                 }
 
-                if (pf != null)
-                    pfp.Add(new(cmuc.Unit, pf));
-                if (vpf != null)
-                    vpfp.Add(new(cmuc.Unit, vpf));
-                if (lsu != null)
-                    lsp.Add(new(cmuc.Unit, lsu));
+                if (lsus != null)
+                    lsp.Add(new(cmuc.Unit, lsus));
+                if (qrfs != null)
+                    qrfp.Add(new(cmuc.Unit, qrfs));
+                if (pfs != null)
+                    pfp.Add(new(cmuc.Unit, pfs));
+                if (vpfs != null)
+                    vpfp.Add(new(cmuc.Unit, vpfs));
             }
         }
     }

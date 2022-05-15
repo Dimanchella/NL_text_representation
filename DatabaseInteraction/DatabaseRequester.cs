@@ -6,6 +6,7 @@ using System.Linq;
 using ComponentMorphologicalUnit = NL_text_representation.ComponentMorphologicalRepresentation.Entities.ComponentMorphologicalUnit;
 using LexicalSemanticUnit = NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities.LexicalSemanticUnit;
 using PrepositionFrame = NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities.PrepositionFrame;
+using QuestionRoleFrame = NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities.QuestionRoleFrame;
 using Term = NL_text_representation.ComponentMorphologicalRepresentation.Entities.Term;
 using TermComponent = NL_text_representation.ComponentMorphologicalRepresentation.Entities.TermComponent;
 using VerbPrepositionFrame = NL_text_representation.MatrixSemanticSyntacticRepresentation.Entities.VerbPrepositionFrame;
@@ -23,6 +24,7 @@ namespace NL_text_representation.DatabaseInteraction
         private static readonly List<DBPrepositionFrame> dbPrepositionFrames = GetPrepositionFramesFromDB();
         private static readonly List<DBVerbPrepositionFrame> dbVerbPrepositionFrames = GetVerbPrepositionFrameFromDB();
         private static readonly List<DBAddMeaning> dbAddMeaningLimits = GetAddMeaningLimits();
+        private static readonly List<DBQuestionRoleFrame> dbQuestionRoleFrames = GetQuestionRoleFramesFromDB();
 
         private static List<DBTerms> GetTermsFromDB()
         {
@@ -152,6 +154,24 @@ namespace NL_text_representation.DatabaseInteraction
                 throw new Exception(e.Message);
             }
         }
+        private static List<DBQuestionRoleFrame> GetQuestionRoleFramesFromDB()
+        {
+            try
+            {
+                return (from frame in dbContext.QuestionRoleFrames
+                        select new DBQuestionRoleFrame
+                        {
+                            ID = frame.IdFrame,
+                            PrepositionTermID = frame.IdTermPreposition,
+                            PronounTermID = frame.IdTermPronounInterrogativeRelativeAdverb,
+                            Meaning = frame.IdMeaningFrameNavigation.Meaning1
+                        }).ToList();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
 
         public static IEnumerable<Term> GetTermsOnLexeme(string firstLexeme)
         {
@@ -186,7 +206,7 @@ namespace NL_text_representation.DatabaseInteraction
                        where main.TermID == cmu.Term.ID
                        select new LexicalSemanticUnit(
                            cmu: cmu,
-                           mainMeaning: main.Meaning,
+                           meaning: main.Meaning,
                            addMeanings: from add in dbAddMeanings
                                         where add.MainMeaningID == main.ID
                                         select add.Meaning
@@ -241,15 +261,45 @@ namespace NL_text_representation.DatabaseInteraction
             try
             {
                 return from frame in dbPrepositionFrames
-                       join term in dbTerms on frame.PrepositionTermID equals term.ID
-                       join component in dbTermComponents on term.ID equals component.TermID
-                       where cmuPrep == null && component.Lexeme.Equals("#nil#") && term.PartOfSpeech.Equals("предлог")
-                       || frame.PrepositionTermID == cmuPrep.Term.ID
+                       where frame.PrepositionTermID == cmuPrep.Term.ID
                        select new PrepositionFrame(
+                           cmu: cmuPrep,
                            prepositionTerm: cmuPrep.Term,
                            noun1AddMeaning: frame.Noun1AddMeaning,
                            noun2AddMeaning: frame.Noun2AddMeaning,
                            noun2Case: frame.Noun2Case,
+                           meaning: frame.Meaning
+                           );
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Ошибка запроса: {e.Message}");
+            }
+        }
+        public static IEnumerable<QuestionRoleFrame> GetQuestionRoleFramesOnCMUPronoun(ComponentMorphologicalUnit cmuPronoun)
+        {
+            try
+            {
+                return from frame in dbQuestionRoleFrames
+                       where frame.PrepositionTermID == cmuPronoun.Term.ID
+                       select new QuestionRoleFrame(
+                           cmu: cmuPronoun,
+                           prepositionTerm: (from term in dbTerms
+                                             where term.ID == frame.PrepositionTermID
+                                             select new Term(
+                                                 id: term.ID,
+                                                 components: from component in dbTermComponents
+                                                             where component.TermID == term.ID
+                                                             orderby component.Position
+                                                             select new TermComponent(
+                                                                 lexeme: component.Lexeme,
+                                                                 isMain: component.IsMain
+                                                                 ),
+                                                 partOfSpeech: term.PartOfSpeech,
+                                                 subClass: term.SubClass
+                                                 )).First(),
+                           pronounTerm: cmuPronoun.Term,
                            meaning: frame.Meaning
                            );
 
@@ -283,6 +333,5 @@ namespace NL_text_representation.DatabaseInteraction
             }
             return formMatch && reflectionMatch && voiceMatch;
         }
-
     }
 }

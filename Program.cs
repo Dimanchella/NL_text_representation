@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 
 using NL_text_representation.ComponentMorphologicalRepresentation;
-using NL_text_representation.SemBuilding;
+using NL_text_representation.MatrixSemanticSyntacticRepresentation;
 
 namespace NL_text_representation
 {
@@ -15,25 +15,50 @@ namespace NL_text_representation
         {
             try
             {
-                StreamReader reader = new("input.txt", Encoding.UTF8);
+                StreamReader reader = new("E:\\Dimanchella_save\\МАИ\\Диплом\\Проекты\\NL_text_representation\\resources\\input3.txt", Encoding.UTF8);
                 List<string> input = new(reader.ReadToEnd().Trim().Split('\n'));
                 reader.Close();
                 input = input.Select(str => str.Trim()).ToList();
 
-                TermsSearcher termsAnalizer = new();
+                TermsSearcher termsSearcher = new();
+                LexicalBasis lexicalBasis = new();
 
                 foreach (string str in input)
                 {
-                    termsAnalizer.FindCMR(str);
-                    var wordReps = termsAnalizer.CMR;
-                    wordReps.ToList()
-                        .ForEach(wordRep => wordRep.CMUs.ToList()
-                            .ForEach(cmr => Console.WriteLine(cmr.ToString())));
+                    Console.WriteLine("\n################################\n"
+                        + str
+                        + "\n################################\n");
+                    try
+                    {
+                        termsSearcher.FindCMR(str);
+                        lexicalBasis.ProjectLinguisticBasis(termsSearcher.CMR);
 
-                    SemBuilder b = new SemBuilder();
+                        var lsp = lexicalBasis.LSP;
+                        var qrfp = lexicalBasis.QRFP;
+                        var pfp = lexicalBasis.PFP;
+                        var vpfp = lexicalBasis.VPFP;
 
-                    Console.WriteLine("\n" + b.getSemReprRequest(str));
-                    Console.WriteLine("\n****************************************************\n");
+                        Console.WriteLine("\n--------LexicalSemanticProjection--------\n");
+                        lsp.ToList()
+                            .ForEach(complect => complect.LSUs.ToList()
+                                .ForEach(unit => Console.WriteLine(unit.ToString())));
+                        Console.WriteLine("\n--------QuestionRoleFrameProjection--------\n");
+                        qrfp.ToList()
+                            .ForEach(complect => complect.QRFs.ToList()
+                                .ForEach(frame => Console.WriteLine(frame.ToString())));
+                        Console.WriteLine("\n--------PrepositionFrameProjection--------\n");
+                        pfp.ToList()
+                            .ForEach(complect => complect.PFs.ToList()
+                                .ForEach(frame => Console.WriteLine(frame.ToString())));
+                        Console.WriteLine("\n--------VerbPrepositionFrameProjection--------\n");
+                        vpfp.ToList()
+                            .ForEach(complect => complect.VPFs.ToList()
+                                .ForEach(frame => Console.WriteLine(frame.ToString())));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
                 }
             }
             catch (Exception e)

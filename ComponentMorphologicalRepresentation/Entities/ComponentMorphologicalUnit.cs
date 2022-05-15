@@ -71,6 +71,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
         public int Length { get => forms.Length; }
         public Term Term { get => term; }
         public MorphologicalForm Form { get => forms[mainFormIndex]; }
+        public IEnumerable<Token> Tokens { get => forms.Select(form => form.Token); }
         public bool HasClass { get => term != null; }
         
 
