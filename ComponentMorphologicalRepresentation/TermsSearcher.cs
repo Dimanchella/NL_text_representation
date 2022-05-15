@@ -1,25 +1,22 @@
-﻿using System;
+﻿using DeepMorphy;
+using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
+using NL_text_representation.DatabaseInteraction;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DeepMorphy;
-using NL_text_representation.DatabaseRequester;
-using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation
 {
-    public class TermsAnalizer
+    public class TermsSearcher
     {
         private static readonly MorphAnalyzer ma = new(withLemmatization: true);
         private static readonly Dictionary<string, string> tokenNamesToLexemes = LinkTokenNamesToLexemes();
 
         private readonly Lexer lexer = new();
-        private int lastPos = 0;
-        private string text = "";
 
+        private List<CMUComplect> cmr = new();
         private List<Token> tokens;
+
+        public IEnumerable<CMUComplect> CMR { get => cmr; }
 
         private static Dictionary<string, string> LinkTokenNamesToLexemes()
         {
@@ -30,20 +27,18 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
             return tokenNamesToLexemes;
         }
 
-        public string Text { set => text = value; }
-
-        public IEnumerable<VariableCMR> GetCMR()
+        public void FindCMR(string text)
         {
             lexer.ResearchedString = text;
             lexer.FindAllTokens();
             tokens = lexer.AllTokens.ToList();
-            return GetVariableCMR();
+            cmr = GetCMUComplects();
         }
 
-        private IEnumerable<WordForm> GetDeepMorphyRep(Token token)
+        private List<MorphologicalForm> GetDeepMorphyRep(Token token)
         {
             var morphsInfo = ma.Parse(token.Lexeme).ToArray();
-            List<WordForm> wordForms = new();
+            List<MorphologicalForm> wordForms = new();
             foreach (var morph in morphsInfo)
             {
                 if (token.Name.Equals("word"))
@@ -69,24 +64,23 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
             }
             return wordForms;
         }
-
-        private IEnumerable<VariableCMR> GetVariableCMR()
+        private List<CMUComplect> GetCMUComplects()
         {
-            List<VariableCMR> variableCMRs = new();
+            List<CMUComplect> cmr = new();
             for (int i = 0; i < tokens.Count && !tokens[i].IsEOS; i++)
             {
-                List<WordTerm> wordTerms = new();
+                List<ComponentMorphologicalUnit> cmus = new();
                 foreach (var wordForm in GetDeepMorphyRep(tokens[i]))
                 {
                     List<Term> terms;
                     if (tokenNamesToLexemes.ContainsKey(tokens[i].Name))
                     {
-                        terms = MorphologicalDBRequester.GetTermsOnLexeme(tokenNamesToLexemes[tokens[i].Name])
+                        terms = DatabaseRequester.GetTermsOnLexeme(tokenNamesToLexemes[tokens[i].Name])
                             .OrderByDescending(term => term.Components.Count()).ToList();
                     }
                     else
                     {
-                        terms = MorphologicalDBRequester.GetTermsOnLexeme(wordForm.Lemma)
+                        terms = DatabaseRequester.GetTermsOnLexeme(wordForm.Lemma)
                             .OrderByDescending(term => term.Components.Count()).ToList();
                     }
 
@@ -102,35 +96,35 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                             }
                             else
                             {
-                                wordTerms.AddRange(tempWT);
+                                cmus.AddRange(tempWT);
                                 i += maxComponents - 1;
                             }
                         }
                     }
                 }
+
                 int maxLength = 0;
-                foreach (var wt in wordTerms)
+                foreach (var cmu in cmus)
                 {
-                    if (maxLength < wt.Length)
+                    if (maxLength < cmu.Length)
                     {
-                        maxLength = wt.Length;
+                        maxLength = cmu.Length;
                     }
                 }
-                variableCMRs.Add(new(tokens[i].Lexeme, wordTerms.Where(wt => wt.Length == maxLength)));
+                cmr.Add(new(tokens[i].Lexeme, cmus.Where(cmu => cmu.Length == maxLength)));
             }
-            return variableCMRs;
+            return cmr;
         }
-
-        private List<WordTerm> EnumerateConponents(WordForm firstForm, Term term, int indexToken)
+        private List<ComponentMorphologicalUnit> EnumerateConponents(MorphologicalForm firstForm, Term term, int indexToken)
         {
-            List<WordTerm> wordTerms = new();
-            List<List<WordForm>> combinationsWordForms = new();
-            List<WordForm> firstComb = new List<WordForm>();
+            List<ComponentMorphologicalUnit> wordTerms = new();
+            List<List<MorphologicalForm>> combinationsWordForms = new();
+            List<MorphologicalForm> firstComb = new List<MorphologicalForm>();
             firstComb.Add(firstForm);
             combinationsWordForms.Add(firstComb);
             for (int i = 1; i < term.Components.Count(); i++)
             {
-                List<WordForm> varForms;
+                List<MorphologicalForm> varForms;
                 varForms = CompareComponentWithToken(
                     term.Components.ToArray()[i],
                     tokens[indexToken + i],
@@ -142,13 +136,15 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                 }
                 else
                 {
-                    List<List<WordForm>> newCombinations = new();
+                    List<List<MorphologicalForm>> newCombinations = new();
                     foreach(var varForm in varForms)
                     {
                         foreach(var combination in combinationsWordForms)
                         {
-                            combination.Add(varForm);
-                            newCombinations.Add(combination);
+                            List<MorphologicalForm> tempComb = new();
+                            tempComb.AddRange(combination);
+                            tempComb.Add(varForm);
+                            newCombinations.Add(tempComb);
                         }
                     }
                     combinationsWordForms = newCombinations;
@@ -157,14 +153,23 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
             combinationsWordForms.ForEach(combination => wordTerms.Add(new(term, combination)));
             return wordTerms;
         }
-
-        private List<WordForm> CompareComponentWithToken(TermComponent component, Token token, bool firstMatch)
+        private List<MorphologicalForm> CompareComponentWithToken(TermComponent component, Token token, bool firstMatch)
         {
-            List<WordForm> forms = new();
+            List<MorphologicalForm> forms = new();
             if (!token.IsEOS)
             {
                 var tempForms = GetDeepMorphyRep(token)
-                    .Where(form => form.Lemma.Equals(component.Lexeme.ToLower()))
+                    .Where(form =>
+                    {
+                        if (tokenNamesToLexemes.ContainsKey(token.Name))
+                        {
+                            return tokenNamesToLexemes[token.Name].Equals(component.Lexeme.ToLower());
+                        }
+                        else
+                        { 
+                            return form.Lemma.Equals(component.Lexeme.ToLower());
+                        }
+                    })
                     .ToList();
                 if (firstMatch)
                 {

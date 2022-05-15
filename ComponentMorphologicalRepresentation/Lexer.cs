@@ -1,10 +1,7 @@
 ﻿using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation
 {
@@ -100,7 +97,7 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation
                 }
             }
             else if (lastPos >= researchedString.Length)
-                return new Token("eos", null);
+                return new Token("eos", "#nil#");
             else if (IsSpaceSeparator(researchedString[lastPos]) && SkipSpaceSeparator())
                 return GetNextToken();
             else

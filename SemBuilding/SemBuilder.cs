@@ -9,10 +9,20 @@ namespace NL_text_representation.SemBuilding
 {
     public class SemBuilder
     {
-        public String getBaseForm(IEnumerable<VariableCMR> cmr, int index)
+        private HashSet<string> signs = new HashSet<string>();
+
+        public SemBuilder()
+        {
+            signs.Add("меньше");
+            signs.Add("не меньше");
+            signs.Add("больше");
+            signs.Add("не больше");
+        }
+
+        public String getBaseForm(IEnumerable<CMUComplect> cmr, int index)
         {
             var word = cmr.ToList().GetRange(index, 1).First();
-            return word.GetCMRs()
+            return word.CMUs
                       .Select(cmr => cmr.Form.Lemma)
                       .First();
         }
@@ -27,6 +37,25 @@ namespace NL_text_representation.SemBuilding
                         select meaning.IdMeaningMainNavigation.Meaning1;
 
             return query.First();
+        }
+
+        public String getSemMainingId(CMUComplect cmr)
+        {
+            Linguistic_DatabaseContext context = new Linguistic_DatabaseContext();
+
+            var query = from meaning in context.TermMainMeanings
+                        where meaning.IdTerm == cmr.CMUs.First().Term.ID
+                        select meaning.IdMeaningMainNavigation.Meaning1;
+
+            string sem = query.First();
+            if (sem.Contains("("))
+            {
+                return sem.Replace("#число#", cmr.Unit);
+            }
+            else
+            {
+                return "(Назв, " + sem + ")";
+            }
         }
 
         public String modeficationForm(String inputForm)
@@ -45,24 +74,38 @@ namespace NL_text_representation.SemBuilding
             if (rel.Length > 1)
             {
                 String[] arg2 = rel[1].Split(',');
-                if (arg2.Length == 2)
+                if (!signs.Contains(arg2[0].ToLower()))
                 {
-                    return arg2[1].Remove(arg2[1].Length - 1).Trim();
+                    if (arg2.Length == 2)
+                    {
+                        return ",=," + arg2[1].Remove(arg2[1].Length - 1).Trim();
+                    }
+                    else
+                    {
+                        return ",=," + arg2[2].Remove(arg2[2].Length - 1).Trim();
+                    }
                 }
                 else
                 {
-                    return arg2[2].Remove(arg2[2].Length - 1).Trim();
+                    if (arg2.Length == 2)
+                    {
+                        return "," + arg2[0].ToLower() + "," + arg2[1].Remove(arg2[1].Length - 1).Trim();
+                    }
+                    else
+                    {
+                        return "," + arg2[0].ToLower() + "," + arg2[2].Remove(arg2[2].Length - 1).Trim();//todo мб не нужно
+                    }
                 }
 
             }
             else
             {
-                return inputForm;
+                return ",=," + inputForm;
             }
 
         }
 
-        public String ConstructSemImage(IEnumerable<VariableCMR> cmr, int j, int m)
+        public String ConstructSemImage(IEnumerable<CMUComplect> cmr, int j, int m)
         {
             var adjs = cmr.ToList().GetRange(j, m);
 
@@ -75,7 +118,7 @@ namespace NL_text_representation.SemBuilding
 
         }
 
-        public String DiscoverConcRelat(IEnumerable<VariableCMR> cmr, int indexNoun1, int indexNoun2, String prep)
+        public String DiscoverConcRelat(IEnumerable<CMUComplect> cmr, int indexNoun1, int indexNoun2, String prep)
         {
             String base1 = getBaseForm(cmr, indexNoun1);
             String base2 = getBaseForm(cmr, indexNoun2);
@@ -84,9 +127,11 @@ namespace NL_text_representation.SemBuilding
 
             var frames = getPerpFrames(prep);
 
+            var debug1 = frames.ToList();
+
             var sorts1 = getSortNoun(base1).ToList();
             var sorts2 = getSortNoun(base2).ToList();
-            var grc = word2.GetCMRs().Select(w => w.Form.Traits["падеж"]).ToList();
+            var grc = word2.CMUs.Select(w => w.Form.Traits["падеж"]).ToList();
 
             var goodFrame = frames.Where(frame => sorts1.Contains(frame.IdMeaningAddNoun1Navigation.Meaning1)
             && sorts2.Contains(frame.IdMeaningAddNoun2Navigation.Meaning1)
@@ -120,10 +165,10 @@ namespace NL_text_representation.SemBuilding
         {
 
             String result = "";
-            TermsAnalizer termsAnalizer = new();
+            TermsSearcher termsAnalizer = new();
 
-            termsAnalizer.Text = request;
-            var cmr = termsAnalizer.GetCMR();
+            termsAnalizer.FindCMR(request);
+            var cmr = termsAnalizer.CMR;
 
             var nouns = findNouns(cmr);
 
@@ -185,10 +230,13 @@ namespace NL_text_representation.SemBuilding
 
                 if (posNoun2 + 1 < cmr.Count())
                 {
-                    concept2 += "*(Назв, " + cmr.ToList().GetRange(posNoun2 + 1, 1).First().Unit + ")";
+                    string semAfterNoun2 = getSemMainingId(cmr.ToList().GetRange(posNoun2 + 1, 1).First());
+
+
+                    concept2 += "*" + semAfterNoun2;
                 }
 
-                result = concept1 + "*(" + frame + ",=," + modeficationFormConcept(concept2) + ")";
+                result = concept1 + "*(" + frame +  modeficationFormConcept(concept2) + ")";
             }
             else
             {
@@ -197,13 +245,13 @@ namespace NL_text_representation.SemBuilding
             return result;
         }
 
-        private List<int> findNouns(IEnumerable<VariableCMR> cmr)
+        private List<int> findNouns(IEnumerable<CMUComplect> cmr)
         {
             List<int> nouns = new List<int>();
             int i = 0;
             foreach (var word in cmr)
             {
-                if (word.GetCMRs().Select(x => x.Term.PartOfSpeech.ToLower()).First().Equals("сущ"))
+                if (word.CMUs.Select(x => x.Term.PartOfSpeech.ToLower()).First().Equals("сущ"))
                 {
                     nouns.Add(i);
                 }
@@ -213,11 +261,11 @@ namespace NL_text_representation.SemBuilding
             return nouns;
         }
 
-        private bool checkPastOfSpeech(IEnumerable<VariableCMR> cmr, int posWord, String partOfSpeech)
+        private bool checkPastOfSpeech(IEnumerable<CMUComplect> cmr, int posWord, String partOfSpeech)
         {
             var word = cmr.ToList().GetRange(posWord, 1).First().Unit;
 
-            return cmr.Where(wr => wr.Unit.Equals(word)).First().GetCMRs().Select(cmr => cmr.Term.PartOfSpeech).First().Equals(partOfSpeech);
+            return cmr.Where(wr => wr.Unit.Equals(word)).First().CMUs.Select(cmr => cmr.Term.PartOfSpeech).First().Equals(partOfSpeech);
         }
     }
 }

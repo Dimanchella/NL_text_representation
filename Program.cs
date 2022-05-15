@@ -21,14 +21,14 @@ namespace NL_text_representation
                 reader.Close();
                 input = input.Select(str => str.Trim()).ToList();
 
-                TermsAnalizer termsAnalizer = new();
+                TermsSearcher termsAnalizer = new();
 
                 foreach (string str in input)
                 {
-                    termsAnalizer.Text = str;
-                    var wordReps = termsAnalizer.GetCMR();
+                    termsAnalizer.FindCMR(str);
+                    var wordReps = termsAnalizer.CMR;
                     wordReps.ToList()
-                        .ForEach(wordRep => wordRep.GetCMRs().ToList()
+                        .ForEach(wordRep => wordRep.CMUs.ToList()
                             .ForEach(cmr => Console.WriteLine(cmr.ToString())));
 
                     SemBuilder b = new SemBuilder();

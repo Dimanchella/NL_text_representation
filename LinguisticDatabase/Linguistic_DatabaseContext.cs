@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -32,6 +34,7 @@ namespace LinguisticDatabase
         public virtual DbSet<TermAddMeaning> TermAddMeanings { get; set; }
         public virtual DbSet<TermComponent> TermComponents { get; set; }
         public virtual DbSet<TermMainMeaning> TermMainMeanings { get; set; }
+        public virtual DbSet<TermMeaning> TermMeanings { get; set; }
         public virtual DbSet<VerbPrepositionFrame> VerbPrepositionFrames { get; set; }
         public virtual DbSet<Word> Words { get; set; }
         public virtual DbSet<WordForm> WordForms { get; set; }
@@ -40,7 +43,8 @@ namespace LinguisticDatabase
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql(System.Configuration.ConfigurationManager.ConnectionStrings["LDB"].ConnectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseNpgsql("Host=10.243.57.89;Port=5432;Database=Linguistic_Database;Username=dima;Password=dima");
             }
         }
 
@@ -322,6 +326,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.PrepositionFrames)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Term_preposition");
 
                 entity.HasOne(d => d.IdTraitCase2Navigation)
@@ -357,6 +362,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.QuestionRoleFrameIdTermPrepositionNavigations)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Term_preposition");
 
                 entity.HasOne(d => d.IdTermPronounInterrogativeRelativeAdverbNavigation)
@@ -484,6 +490,19 @@ namespace LinguisticDatabase
                     .HasConstraintName("Term");
             });
 
+            modelBuilder.Entity<TermMeaning>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("TermMeaning");
+
+                entity.Property(e => e.IdMeaningMain).HasColumnName("ID_meaning_main");
+
+                entity.Property(e => e.IdTerm).HasColumnName("ID_term");
+
+                entity.Property(e => e.Meaning).HasMaxLength(256);
+            });
+
             modelBuilder.Entity<VerbPrepositionFrame>(entity =>
             {
                 entity.HasKey(e => e.IdFrame)
@@ -524,6 +543,7 @@ namespace LinguisticDatabase
                 entity.HasOne(d => d.IdTermPrepositionNavigation)
                     .WithMany(p => p.VerbPrepositionFrames)
                     .HasForeignKey(d => d.IdTermPreposition)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("	 Term_preposition");
 
                 entity.HasOne(d => d.IdTraitCaseNavigation)
