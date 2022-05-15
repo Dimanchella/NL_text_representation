@@ -1,5 +1,4 @@
-﻿using nli_to_lod.Sparql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using VDS.RDF.Query;
 

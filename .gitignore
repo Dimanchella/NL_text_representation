@@ -5,3 +5,5 @@
 /.vs/nli-to-lod
 /obj
 /bin/Debug/net5.0-windows
+/.vs/NL_text_representation
+/bin/Debug/net5.0

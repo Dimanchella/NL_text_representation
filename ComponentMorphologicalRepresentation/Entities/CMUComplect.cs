@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
 {
-    public class ComplectCMR
+    public class CMUComplect
     {
         private readonly string word;
-        private readonly ComponentMorphologicalUnit[] cmrs;
+        private readonly ComponentMorphologicalUnit[] cmus;
 
-        public ComplectCMR(string word, IEnumerable<ComponentMorphologicalUnit> cmrs)
+        public CMUComplect(string word, IEnumerable<ComponentMorphologicalUnit> cmus)
         {
             this.word = word;
-            this.cmrs = cmrs.ToArray();
+            this.cmus = cmus.ToArray();
         }
 
         public enum Operations
@@ -23,31 +21,12 @@ namespace NL_text_representation.ComponentMorphologicalRepresentation.Entities
             Or = 1
         }
 
-        public enum CMRClassFilters
-        {
-            All = 0,
-            WithClass = 1,
-            WithoutClass = 2
-        }
-
         public string Unit { get => word; }
-        public IEnumerable<ComponentMorphologicalUnit> GetCMRs(CMRClassFilters filter = CMRClassFilters.All)
-        {
-            switch (filter)
-            {
-                case CMRClassFilters.WithClass:
-                    return cmrs.Where(cmr => cmr.HasClass);
-                case CMRClassFilters.WithoutClass:
-                    return cmrs.Where(cmr => !cmr.HasClass);
-                case CMRClassFilters.All:
-                default:
-                    return cmrs;
-            }
-        }
+        public IEnumerable<ComponentMorphologicalUnit> CMUs { get => cmus; }
 
-        public IEnumerable<ComponentMorphologicalUnit> GetCMRsByTrates(CMRClassFilters filter, Operations operation, params string[] trates)
+        public IEnumerable<ComponentMorphologicalUnit> GetCMRsByTrates(Operations operation, params string[] trates)
         {
-            return GetCMRs(filter).Where(cmr =>
+            return cmus.Where(cmr =>
             {
                 bool isConf;
                 switch (operation)

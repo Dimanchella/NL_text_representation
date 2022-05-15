@@ -1,10 +1,9 @@
 ﻿using NL_text_representation.SemBuilding;
 using NL_text_representation.SPARQL;
-using nli_to_lod.Sparql;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace nli_to_lod
+namespace NL_text_representation
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

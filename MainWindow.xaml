@@ -1,9 +1,9 @@
-﻿<Window x:Class="nli_to_lod.MainWindow"
+﻿<Window x:Class="NL_text_representation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:nli_to_lod"
+        xmlns:local="clr-namespace:NL_text_representation"
         mc:Ignorable="d"
         Title="Естественно-языковой интерфейс к LOD" Height="450" Width="800">
     <Grid>

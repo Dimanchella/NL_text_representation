@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace nli_to_lod
+namespace NL_text_representation
 {
     /// <summary>
     /// Interaction logic for App.xaml

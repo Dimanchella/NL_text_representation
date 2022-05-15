@@ -1,4 +1,4 @@
-﻿namespace nli_to_lod.Sparql
+﻿namespace NL_text_representation.SPARQL
 {
     public class ResultValue
     {
