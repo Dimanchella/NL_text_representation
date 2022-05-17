@@ -1,5 +1,6 @@
 ﻿using LinguisticDatabase;
 using NL_text_representation.DatabaseInteraction.Entities;
+using nli_to_lod.Exceptinos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -194,8 +195,8 @@ namespace NL_text_representation.DatabaseInteraction
             }
             catch (Exception e)
             {
-                throw new Exception($"Ошибка запроса: {e.Message}");
-            }
+                throw new DBException("Ошибка при обращении к базе данных");
+            } 
         }
 
         public static IEnumerable<LexicalSemanticUnit> GetLexicalSemanticMeaningsOnCMU(ComponentMorphologicalUnit cmu)
@@ -214,7 +215,7 @@ namespace NL_text_representation.DatabaseInteraction
             }
             catch (Exception e)
             {
-                throw new Exception($"Ошибка запроса: {e.Message}");
+                throw new DBException("Ошибка при обращении к базе данных");
             }
         }
         public static IEnumerable<VerbPrepositionFrame> GetVerbPrepositionFrameOnCMUVerb(ComponentMorphologicalUnit cmuVerb)
@@ -253,7 +254,7 @@ namespace NL_text_representation.DatabaseInteraction
             }
             catch (Exception e)
             {
-                throw new Exception($"Ошибка запроса: {e.Message}");
+                throw new DBException("Ошибка при обращении к базе данных");
             }
         }
         public static IEnumerable<PrepositionFrame> GetPrepositionFramesOnCMUPrep(ComponentMorphologicalUnit cmuPrep)
@@ -274,7 +275,7 @@ namespace NL_text_representation.DatabaseInteraction
             }
             catch (Exception e)
             {
-                throw new Exception($"Ошибка запроса: {e.Message}");
+                throw new DBException("Ошибка при обращении к базе данных");
             }
         }
         public static IEnumerable<QuestionRoleFrame> GetQuestionRoleFramesOnCMUPronoun(ComponentMorphologicalUnit cmuPronoun)
@@ -306,7 +307,7 @@ namespace NL_text_representation.DatabaseInteraction
             }
             catch (Exception e)
             {
-                throw new Exception($"Ошибка запроса: {e.Message}");
+                throw new DBException("Ошибка при обращении к базе данных");
             }
         }
 
