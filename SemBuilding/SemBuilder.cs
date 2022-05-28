@@ -2,6 +2,7 @@
 using NL_text_representation.ComponentMorphologicalRepresentation;
 using NL_text_representation.ComponentMorphologicalRepresentation.Entities;
 using nli_to_lod.Exceptinos;
+using nli_to_lod.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -173,6 +174,8 @@ namespace NL_text_representation.SemBuilding
 
             var nouns = findNouns(cmr);
 
+            Validator validator = new Validator();
+
             if (nouns.Count() == 1)
             {
                 int posNoun1 = nouns[0];
@@ -189,7 +192,8 @@ namespace NL_text_representation.SemBuilding
             }
 
             else
-            if (nouns.Count() == 2 || (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1))
+            //if (nouns.Count() == 2 || (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1))
+            if (validator.validateRequest(cmr))
             {
                 int posNoun1 = nouns[0];
                 int posNoun2 = nouns[1];
@@ -238,7 +242,7 @@ namespace NL_text_representation.SemBuilding
                     concept2 += "*" + semAfterNoun2;
                 }
 
-                result = concept1 + "*(" + frame +  modeficationFormConcept(concept2) + ")";
+                result = concept1 + "*(" + frame + modeficationFormConcept(concept2) + ")";
             }
             else
             {
