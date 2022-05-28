@@ -165,7 +165,6 @@ namespace NL_text_representation.SemBuilding
 
         public String getSemReprRequest(String request)
         {
-
             String result = "";
             TermsSearcher termsAnalizer = new();
 
@@ -176,23 +175,6 @@ namespace NL_text_representation.SemBuilding
 
             Validator validator = new Validator();
 
-            if (nouns.Count() == 1)
-            {
-                int posNoun1 = nouns[0];
-
-                String base1 = getBaseForm(cmr, posNoun1);
-                String semnoun1 = getSemMaining(base1);
-
-                String concept1 = semnoun1;
-                if (posNoun1 > 0)
-                {
-                    concept1 += "*" + ConstructSemImage(cmr, 0, posNoun1);
-                }
-                result = concept1;
-            }
-
-            else
-            //if (nouns.Count() == 2 || (nouns.Count() == 2 || nouns[2] - nouns[1] <= 1))
             if (validator.validateRequest(cmr))
             {
                 int posNoun1 = nouns[0];

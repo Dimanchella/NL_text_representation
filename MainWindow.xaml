@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NL_text_representation"
         mc:Ignorable="d"
-        Title="Естественно-языковой интерфейс к LOD" Height="450" Width="800">
+        Title="Естественно-языковой интерфейс к LOD" Height="450" Width="800" MinWidth="800" MinHeight="450">
     <Grid>
-        <Label Content="Введите запрос на русском языке" HorizontalAlignment="Left" Margin="120,54,0,0" VerticalAlignment="Top" FontSize="14"/>
-        <TextBox x:Name="inputRequest" HorizontalAlignment="Left" Margin="120,88,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="560" FontSize="14"/>
-        <Button Content="Выполнить" HorizontalAlignment="Center" Margin="0,140,0,0" VerticalAlignment="Top" Height="47" Width="210" Click="Button_Click" FontSize="14"/>
-        <DataGrid x:Name="results" Margin="0,217,0,0" AutoGenerateColumns="False" FontSize="14" SelectionChanged="results_SelectionChanged">
+        <Label Content="Введите запрос на русском языке" HorizontalAlignment="Left" Margin="120,49,0,0" VerticalAlignment="Top" FontSize="22"/>
+        <TextBox x:Name="inputRequest" Margin="120,88,120,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="22"/>
+        <Button Content="Выполнить" HorizontalAlignment="Center" Margin="0,140,0,0" Width="210" Click="Button_Click" FontSize="22" Height="54" VerticalAlignment="Top"/>
+        <DataGrid x:Name="results" Margin="0,217,0,0" AutoGenerateColumns="False" FontSize="22" SelectionChanged="results_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridHyperlinkColumn
                     Width="*"
